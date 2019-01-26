@@ -32,6 +32,17 @@ def sample_noise():
     
     # write_noise(frames, audio)
 
+""" def stream_audio(frames):
+    new_frames = array(frames, dtype=int16)
+    bytestream = new_frames.tobytes()
+    pya = pyaudio.PyAudio()  # unsure of what this is doing tbh
+    stream = pya.open(format=pya.get_format_from_width(width=2), channels=1, rate=sample_rate, output=True)
+    stream.write(bytestream)
+    stream.stop_stream()
+    stream.close()
+
+    pya.terminate() """
+
 
 def write_noise(frames, audio):
     wavef = wave.open("whitenoise.wav", 'wb')
@@ -43,3 +54,5 @@ def write_noise(frames, audio):
     print("Written to file.")
 
 frames, audio = sample_noise()
+# stream_audio(frames)
+write_noise(frames, audio)
