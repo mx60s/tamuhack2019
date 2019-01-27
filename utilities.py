@@ -108,8 +108,11 @@ def write_noise(filename, frames):
   noise = AudioSegment.from_wav(filename)
   noise = noise - 40
   noise.export(filename, "wav")
-
+ 
   return filename, duration
+
+#def difference(input):
+  #return 9000 - input
 
 def create_noise(sound_file):
   _, data = read(sound_file)
@@ -117,6 +120,7 @@ def create_noise(sound_file):
   normalized = [(ele/2**8.)*2-1 for ele in a] # this is 8-bit track, b is now normalized on [-1,1)
   fft_data = f.fft(normalized) # calculate fourier transform (complex numbers list)
   print(abs(fft_data[0]))
+
 
   signal_length = int(len(fft_data)/2)  # you only need half of the fft list (real signal symmetry)
   # print(abs(fft_data[:(signal_length - 1)]))
