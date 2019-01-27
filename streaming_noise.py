@@ -14,7 +14,7 @@ sample,_ = write_noise("sample.wav", frames, audio)
 signal = create_noise(sample)
 white_noise, duration = write_noise("whitenoise.wav", signal, audio)
 
-
+print("\nCrying babies on airplanes are a thing of the past! Press CTRL-C to exit.")
 print("Playing...")
 
 try:
