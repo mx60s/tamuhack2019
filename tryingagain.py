@@ -116,6 +116,7 @@ def create_noise(sound_file):
   a = data.T[0]   # 2 channel soundtrack, taking the first one (why does it need to be 2 channel?)
   normalized = [(ele/2**8.)*2-1 for ele in a] # this is 8-bit track, b is now normalized on [-1,1)
   fft_data = f.fft(normalized) # calculate fourier transform (complex numbers list)
+  print(abs(fft_data[0]))
 
   signal_length = int(len(fft_data)/2)  # you only need half of the fft list (real signal symmetry)
   # print(abs(fft_data[:(signal_length - 1)]))
