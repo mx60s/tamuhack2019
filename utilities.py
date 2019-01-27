@@ -120,6 +120,8 @@ def create_noise(sound_file):
   normalized = [(ele/2**8.)*2-1 for ele in a] # this is 8-bit track, b is now normalized on [-1,1)
   fft_data = f.fft(normalized) # calculate fourier transform (complex numbers list)
   print(abs(fft_data[0]))
+  for i in range(1,5):
+    print(abs(fft_data[len(fft_data)-i]))
 
 
   signal_length = int(len(fft_data)/2)  # you only need half of the fft list (real signal symmetry)
@@ -137,15 +139,11 @@ def create_noise(sound_file):
   """
 
   for i in range(signal_length):
-    if abs(fft_data[i]) < 2000:
-      fft_data[i] = 0
+    if abs(fft_data[i]) < 10000:
+      fft_data[i] = abs(fft_data[i])/2
+    else:
+      fft_data[i] = abs(fft_data[i])**2
 
   new_signals = f.ifft(fft_data)
-  # new_signals = fft_data
-  return new_signals
 
-
-  
-
-#player = WavePlayerLoop("whitenoise.wav",True)
-#player.play()
+  return fft_data
