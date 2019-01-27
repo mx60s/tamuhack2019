@@ -17,7 +17,7 @@ sample_rate = 44100 # hertz, test number
 sample_duration = 2.0   # seconds
 write_frequency = 440.0
 
-min_value = 5000   # minimum intensity for a frequency to be considered important enough to work with
+min_value = 2000   # minimum intensity for a frequency to be considered important enough to work with
 
 max_volume = 32767.0    # literally the max, can we do a slider?
 
