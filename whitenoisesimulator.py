@@ -31,7 +31,7 @@ def create_noise(sound_file):
     # print(abs(fft_data[:(signal_length - 1)]))
     # for x in abs(fft_data[:(signal_length - 1)]):
       #  print(x)
-
+    """
     # this all just plots it for ease of access I spose
     k = np.arange(len(data))
     T = len(data)/sample_rate  # where fs is the sampling frequency
@@ -39,33 +39,27 @@ def create_noise(sound_file):
     # plt.xlabel(frq_label)
     plt.plot(abs(fft_data[:(signal_length-1)]),'r') 
     plt.show()
+    """
 
     for i in range(signal_length):
         if abs(fft_data[i]) < min_value:
             fft_data[i] = 0
 
     new_signals = f.ifft(fft_data)
+    # new_signals = fft_data
     return new_signals
 
 
 
 
-def sample_noise():
-    stream = audio.open(format = FORMAT, channels = CHANNELS,
-                        rate = sample_rate, input = True,
-                        frames_per_buffer = CHUNK)
+def sample_noise(stream, duration):
     print("Recording...")
     frames = []
-    for i in range(int(sample_rate/CHUNK * sample_duration)):
+    for i in range(int(sample_rate/CHUNK * duration)):
         data = stream.read(CHUNK)
         frames.append(data)
 
-    stream.stop_stream()
-    stream.close()
-    print("Finished recording")
-    audio.terminate()
-
-    return frames, audio
+    return frames
     
     # write_noise(frames, audio):
 
@@ -90,11 +84,16 @@ def write_noise(filename, frames, audio):
     wavef.setframerate(sample_rate)
     wavef.writeframes(b''.join(frames))
     wavef.close()
-    print("Written to file.")
-    return filename
+    # print("Written to file.")
 
-frames, audio = sample_noise()
+    frames = wavef.getnframes()
+    rate = wavef.getframerate()
+    duration = frames / float(rate)
+
+    return filename, duration
+
+#frames = sample_noise(2)
 # stream_audio(frames)
-sample_name = write_noise("samplenoise.wav", frames, audio)
-new_signals = create_noise(sample_name)
-new_name = write_noise("newnoise.wav", new_signals, audio)
+#sample_name = write_noise("samplenoise.wav", frames, audio)
+#new_signals = create_noise(sample_name)
+#new_name = write_noise("newnoise.wav", new_signals, audio)
