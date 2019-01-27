@@ -1,15 +1,14 @@
 import os
-import wave
-import threading
 import sys
-from scipy.io.wavfile import read
-import scipy.fftpack as f
-from pydub import AudioSegment
-
+import threading
+import wave
 
 # PyAudio Library
 import pyaudio
-
+import scipy.fftpack as f
+from pydub import AudioSegment
+from scipy.io.wavfile import read
+import numpy as np
 
 FORMAT = pyaudio.paInt16
 CHANNELS = 2
@@ -17,11 +16,6 @@ CHUNK = 1024    # Uh
 sample_rate = 44100 # hertz, test number
 
 class WavePlayerLoop(threading.Thread) :
-  """
-  A simple class based on PyAudio to play wave loop.
-  It's a threading class. You can play audio while your application
-  continues to do its stuff. :)
-  """
 
   CHUNK = 1024
 
@@ -39,42 +33,43 @@ class WavePlayerLoop(threading.Thread) :
 
   def run(self):
     # Open Wave File and start play!
-    wf = wave.open(self.filepath, 'rb')
-    player = pyaudio.PyAudio()
-    old_file = self.filepath
+    try:
+      wf = wave.open(self.filepath, 'rb')
+      player = pyaudio.PyAudio()
+      old_file = self.filepath
 
-    # Open Output Stream (basen on PyAudio tutorial)
-    stream = player.open(format = player.get_format_from_width(wf.getsampwidth()),
-        channels = wf.getnchannels(),
-        rate = wf.getframerate(),
-        output = True)
+      # Open Output Stream (basen on PyAudio tutorial)
+      stream = player.open(format = player.get_format_from_width(wf.getsampwidth()),
+          channels = wf.getnchannels(),
+          rate = wf.getframerate(),
+          output = True)
 
-    # PLAYBACK LOOP
-    data = wf.readframes(self.CHUNK)
-    while self.loop :
-      stream.write(data)
+      # PLAYBACK LOOP
       data = wf.readframes(self.CHUNK)
-      if data == b'' : # If file is over then rewind.
-        #if old_file == self.filepath:
-        wf.rewind()
-        #else:
-          #wf = wave.open(self.filepath, 'rb')
+      while self.loop :
+        stream.write(data)
         data = wf.readframes(self.CHUNK)
+        if data == b'' : # If file is over then rewind.
+          wf.rewind()
+          data = wf.readframes(self.CHUNK)
 
-    stream.close()
-    player.terminate()
+      stream.close()
+      player.terminate()
+    except KeyboardInterrupt:
+      print("Thanks!")
+      self.stop()
+      return
 
 
   def play(self) :
-    """
-    Just another name for self.start()
-    """
-    self.start()
+    try:
+      self.start()
+    except KeyboardInterrupt:
+      print("Thanks!")
+      self.stop()
+      return
 
   def stop(self) :
-    """
-    Stop playback. 
-    """
     self.loop = False
 
 
@@ -92,14 +87,12 @@ def sample_noise():
 
 def write_noise(filename, frames):
   audio = pyaudio.PyAudio()
-  # filename = "whitenoise.wav"
   wavef = wave.open(filename, 'wb')
   wavef.setnchannels(CHANNELS)
   wavef.setsampwidth(audio.get_sample_size(FORMAT))
   wavef.setframerate(sample_rate)
   wavef.writeframes(b''.join(frames))
   wavef.close()
-  # print("Written to file.")
 
   frames = wavef.getnframes()
   rate = wavef.getframerate()
@@ -110,9 +103,6 @@ def write_noise(filename, frames):
   noise.export(filename, "wav")
  
   return filename, duration
-
-#def difference(input):
-  #return 9000 - input
 
 def create_noise(sound_file):
   _, data = read(sound_file)
@@ -125,18 +115,6 @@ def create_noise(sound_file):
 
 
   signal_length = int(len(fft_data)/2)  # you only need half of the fft list (real signal symmetry)
-  # print(abs(fft_data[:(signal_length - 1)]))
-  # for x in abs(fft_data[:(signal_length - 1)]):
-    #  print(x)
-  """
-  # this all just plots it for ease of access I spose
-  k = np.arange(len(data))
-  T = len(data)/sample_rate  # where fs is the sampling frequency
-  frq_label = k/T
-  # plt.xlabel(frq_label)
-  plt.plot(abs(fft_data[:(signal_length-1)]),'r') 
-  plt.show()
-  """
 
   for i in range(signal_length):
     if abs(fft_data[i]) < 10000:

@@ -1,6 +1,5 @@
 from utilities import *
-import numpy as np
-#import asyncio
+
 
 def main():
     # Sampling
@@ -33,6 +32,7 @@ def main():
             um = not um
 
     except KeyboardInterrupt:
-        print("See you space cowboy~")
+        print("Thanks!")
+        return
 
 main()
